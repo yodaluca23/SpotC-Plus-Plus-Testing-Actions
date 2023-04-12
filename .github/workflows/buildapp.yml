@@ -11,27 +11,27 @@ on:
       bundle_id:
           description: "Modify the bundle ID. Not recommended"
           default: "com.yodaluca23.SpotCPlusPlus"
-          required: true
+          required: false
           type: string
       decrypted_spotify_url:
           description: "The direct URL to the decrypted Spotify ipa"
           default: ""
           required: true
           type: string
+      spotilife_url:
+          description: "The direct URL to the Spotilife Tweak"
+          default: ""
+          required: true
+          type: string
       sposify_url:
           description: "The direct URL to the Sposify Tweak"
           default: ""
-          required: False
+          required: true
           type: string
       sposify_fix_url:
           description: "The direct URL to the SposifyFix Tweak"
           default: ""
-          required: False
-          type: string
-      spotilife_url:
-          description: "The direct URL to the Spotilife Tweak"
-          default: ""
-          required: False
+          required: true
           type: string
       spotify_tweak:
           description: "The direct URL to any other tweaks to be injected"

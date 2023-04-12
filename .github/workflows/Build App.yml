@@ -1,6 +1,8 @@
-name: Build
-on: workflow_dispach:
-  inputs:
+name: Build App IPA
+
+on:
+  workflow_dispatch:
+    inputs:
     spotsplusplus_version:
         description: "The version of SpotC++"
         default: ""

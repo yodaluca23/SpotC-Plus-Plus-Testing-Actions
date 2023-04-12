@@ -3,80 +3,72 @@ name: Build App IPA
 on:
   workflow_dispatch:
     inputs:
-    spotsplusplus_version:
-        description: "The version of SpotC++"
-        default: ""
-        required: true
-        type: string
-    bundle_id:
-        description: "Modify the bundle ID. Not recommended"
-        default: "com.yodaluca23.SpotCPlusPlus"
-        required: true
-        type: string
-    decrypted_spotify_url:
-        description: "The direct URL to the decrypted Spotify ipa"
-        default: ""
-        required: true
-        type: string
-    sposify_url:
-        description: "The direct URL to the Sposify Tweak"
-        default: ""
-        required: False
-        type: string
-    sposify_fix_url:
-        description: "The direct URL to the SposifyFix Tweak"
-        default: ""
-        required: False
-        type: string
-    spotilife_url:
-        description: "The direct URL to the Spotilife Tweak"
-        default: ""
-        required: False
-        type: string
-    spotify_tweak:
-        description: "The direct URL to any other tweaks to be injected"
-        default: ""
-        required: False
-        type: string
-    spotify_tweak_bundleid:
-        description: "The bundle ID, for the custom tweak above, if using please add a space directly after the bundle ID."
-        default: ""
-        required: False
-        type: string
+      spotsplusplus_version:
+          description: "The version of SpotC++"
+          default: ""
+          required: true
+          type: string
+      bundle_id:
+          description: "Modify the bundle ID. Not recommended"
+          default: "com.yodaluca23.SpotCPlusPlus"
+          required: true
+          type: string
+      decrypted_spotify_url:
+          description: "The direct URL to the decrypted Spotify ipa"
+          default: ""
+          required: true
+          type: string
+      sposify_url:
+          description: "The direct URL to the Sposify Tweak"
+          default: ""
+          required: False
+          type: string
+      sposify_fix_url:
+          description: "The direct URL to the SposifyFix Tweak"
+          default: ""
+          required: False
+          type: string
+      spotilife_url:
+          description: "The direct URL to the Spotilife Tweak"
+          default: ""
+          required: False
+          type: string
+      spotify_tweak:
+          description: "The direct URL to any other tweaks to be injected"
+          default: ""
+          required: False
+          type: string
 
-  concurrency:
-  group: ${{ github.workflow }}-${{ github.ref }}
-  cancel-in-progress: true
+jobs:
+    build:
+      runs-on: macos-latest
+      steps:
 
-  jobs:
-  build:
-    runs-on: macos-latest
-    steps:
+      - name: Checkout Main
+      - uses: actions/checkout@v2
+        with:
+          submodules: true
+          token: ${{ secrets.GITHUB_TOKEN }}
 
-  - name: Checkout Main
-    - uses: actions/checkout@v2
-      with:
-        submodules: true
-        token: ${{ secrets.GITHUB_TOKEN }}
+      - name: Install Azule CLI
+        run:  |
+          git clone https://github.com/Al4ise/Azule ~/Azule
+          sudo ln -sf ~/Azule/azule /usr/local/bin/azule
+          azule -F
+      - name: Download IPA and Tweaks
+        run:  |
+          cd ~/Assets
+          curl -o spotifyipa ${{ inputs.decrypted_spotify_url }}
+          curl -o spotilifedeb ${{ inputs.spotilife_url }}
+          curl -o sposifydeb ${{ inputs.sposify_url }}
+          curl -o sposifyfixdeb ${{ inputs.sposify_fix_url }}
+          curl -o othertweakdeb ${{ inputs.spotify_tweak }}
+          cd ~
 
-    - name: Install Azule CLI
-      run: git clone https://github.com/Al4ise/Azule ~/Azule
-      run: sudo ln -sf ~/Azule/azule /usr/local/bin/azule
-      run: azule -F
+      - name: Inject Debs
+        run:  azule -n patchedspotifyipa -i ~/Assets/spotifyipa.ipa -o ~ -f ~/Assets/spotilifedeb ~/Assets/sposifydeb ~/Assets/sposifyfixdeb ~/Assets/othertweakdeb -c ${{ inputs.spotsplusplus_version }} -b ${{ inputs.bundle_id }} -e 
 
-  - name: Download IPA and Tweaks
-      run: cd ~/Assets
-      run: curl -o spotifyipa ${{ inputs.decrypted_spotify_url }}
-      run: curl -o spotilifedeb ${{ inputs.spotilife_url }}
-      run: curl -o sposifydeb ${{ inputs.sposify_url }}
-      run: curl -o sposifyfixdeb ${{ inputs.sposify_fix_url }}
-      run: curl -o othertweakdeb ${{ inputs.spotify_tweak }}
-      run: cd ~
-      
-  - name: Inject Debs
-      run:  azule -n patchedspotifyipa -i ~/Assets/*.ipa -o ~ -f com.julioverne.spotilife com.spos com.level3tjg.sposifyfix ${{ inputs.spotify_tweak_bundleid }} -c ${{ inputs.spotsplusplus_version }} -b ${{ inputs.bundle_id }} -e 
-      
-  - name: Upload IPA File
-  uses: actions/upload-artifact@v3.1.1
-  with:
-    path: ~/*.ipa
+      - name: Upload IPA App
+        uses: actions/upload-artifact@v3.1.1
+        with:
+          path: ~/patchedspotifyipa.ipa

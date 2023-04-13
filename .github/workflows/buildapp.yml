@@ -57,6 +57,7 @@ jobs:
           
       - name: Download IPA and Tweaks
         run:  |
+          mdir ~/Assets
           cd ~/Assets
           curl -o spotifyipa ${{ inputs.decrypted_spotify_url }}
           curl -o spotilifedeb ${{ inputs.spotilife_url }}

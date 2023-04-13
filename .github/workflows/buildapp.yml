@@ -54,7 +54,6 @@ jobs:
         run:  |
           git clone https://github.com/Al4ise/Azule ~/Azule
           sudo ln -sf ~/Azule/azule /usr/local/bin/azule
-          azule -F
           
       - name: Download IPA and Tweaks
         run:  |

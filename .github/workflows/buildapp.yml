@@ -57,15 +57,15 @@ jobs:
           
       - name: Download IPA and Tweaks
         run:  |
-          cd  ~
+          cd  ~/
           mkdir Assets
-          cd ~/Assets
+          cd ~/Assets/
           curl -o spotifyipa ${{ inputs.decrypted_spotify_url }}
           curl -o spotilifedeb ${{ inputs.spotilife_url }}
           curl -o sposifydeb ${{ inputs.sposify_url }}
           curl -o sposifyfixdeb ${{ inputs.sposify_fix_url }}
           curl -o othertweakdeb ${{ inputs.spotify_tweak }}
-          cd ~
+          cd ~/
 
       - name: Inject Debs
         run:  azule -n patchedspotifyipa -i ~/Assets/spotifyipa.ipa -o ~ -f ~/Assets/spotilifedeb ~/Assets/sposifydeb ~/Assets/sposifyfixdeb ~/Assets/othertweakdeb -c ${{ inputs.spotsplusplus_version }} -b ${{ inputs.bundle_id }} -e 
